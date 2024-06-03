@@ -1,0 +1,66 @@
+package view
+
+import (
+	"fmt"
+
+	"github.com/hypercompl3x/todo/model"
+)
+
+templ AddModal() {
+	<div _="on closeModal remove me">
+		>
+		<div class="fixed inset-0 bg-gray-700 bg-opacity-20 backdrop-blur-sm"></div>
+		<div class="fixed inset-0">
+			<div class="flex items-center justify-center w-full h-full">
+				<form _="on htmx:afterOnLoad trigger closeModal" hx-post="/add-todo" hx-swap="beforeend" hx-target="#todo-list" class="w-full p-5 space-y-3 bg-white rounded-md max-w-96">
+					<div class="text-3xl font-bold leading-none text-center">Add Todo</div>
+					<div class="flex flex-col gap-y-0.5 w-full">
+						<label htmlFor="title" class="font-semibold">Title</label>
+						<input type="text" id="title" name="title" class="px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:border-black focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"/>
+					</div>
+					<div class="flex flex-col gap-y-0.5 w-full">
+						<label htmlFor="description" class="font-semibold">Description</label>
+						<input type="text" id="title" name="description" class="px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:border-black focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"/>
+					</div>
+					<div class="flex justify-between">
+						<button type="button" _="on click trigger closeModal" class="py-1.5 px-5 bg-gray-700 rounded-md text-white font-semibold">Cancel</button>
+						<button class="py-1.5 px-5 bg-green-500 rounded-md text-white font-semibold">Create</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}
+
+templ TodoCard(todo model.Todo) {
+	<div class="flex flex-col justify-between p-3 rounded-md bg-amber-200 h-36">
+		<div class="space-y-1">
+			<div class="text-xl font-bold">{ todo.Title }</div>
+			<div>{ todo.Description }</div>
+		</div>
+		<div class="flex items-center gap-x-2">
+			<div class="font-bold">Completed</div>
+			<input
+				type="checkbox"
+				hx-put="/update-todo"
+				hx-trigger="change"
+				hx-vals={ fmt.Sprintf(`{"id": "%v", "isComplete": "%v"}`, todo.Id, !todo.IsComplete) }
+				checked?={ todo.IsComplete }
+			/>
+		</div>
+	</div>
+}
+
+templ Todo(todos []model.Todo) {
+	<div id="todo-page" class="flex flex-col items-center py-8 gap-y-8">
+		<h1 class="text-5xl font-bold text-center">MY TODOS</h1>
+		<div id="todo-list" class="grid w-full grid-cols-1 gap-2 px-2 sm:gap-5 lg:gap-8 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 sm:px-5">
+			<button hx-get="/show-modal" hx-target="#todo-page" hx-swap="afterend" class="flex items-center justify-center text-3xl font-bold bg-green-500 rounded-md h-36">
+				ADD TODO
+			</button>
+			for _, todo := range todos {
+				@TodoCard(todo)
+			}
+		</div>
+	</div>
+}

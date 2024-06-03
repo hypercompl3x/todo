@@ -12,10 +12,10 @@ templ-generate:
 
 .PHONY: dev
 dev:
-		go build -o ./tmp ./cmd/main.go && cd cmd && air
+		go build -o ./tmp/main.exe ./cmd/main.go && air
 
 .PHONY: build
 build:
 		make tailwind-build
 		make templ-generate
-		go build -o ./tmp ./cmd/main.go
+		go build -o ./tmp/main.exe ./cmd/main.go

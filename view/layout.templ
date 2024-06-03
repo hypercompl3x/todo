@@ -1,0 +1,30 @@
+package view
+
+import "os"
+
+templ Header() {
+	<head>
+		<title>Todo Web App</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<script src="static/script/htmx.min.js"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		if os.Getenv("env") == "production" {
+			<link rel="stylesheet" href="static/css/output.min.css"/>
+		} else {
+			<link rel="stylesheet" href="static/css/output.css"/>
+		}
+	</head>
+}
+
+templ Layout(content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@Header()
+		<body class="h-full">
+			<main class="container h-full mx-auto">
+				@content
+			</main>
+		</body>
+	</html>
+}
